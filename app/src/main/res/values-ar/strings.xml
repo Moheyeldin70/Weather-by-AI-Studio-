@@ -1,0 +1,144 @@
+<resources>
+    <string name="app_name">نبض الطقس</string>
+
+    <!-- Navigation & Top Bar -->
+    <string name="cd_open_cities">اختر المدينة</string>
+    <string name="cd_use_gps">استخدم الموقع الحالي</string>
+    <string name="cd_refresh">تحديث الطقس</string>
+    <string name="cd_settings">الإعدادات</string>
+    <string name="cd_toggle_language">تغيير اللغة</string>
+    <string name="cd_close">إغلاق</string>
+    <string name="cd_back">رجوع</string>
+    <string name="cd_delete_city">حذف المدينة</string>
+    <string name="cd_add_city">حفظ المدينة</string>
+    <string name="cd_hero_sky">خلفية جوية للسماء</string>
+
+    <!-- Hero & Summary -->
+    <string name="feels_like">المحسوسة %1$s</string>
+    <string name="high_low">العظمى:%1$s  •  الصغرى:%2$s</string>
+    <string name="updated_just_now">تم التحديث الآن</string>
+    <string name="updated_time">آخر تحديث %1$s</string>
+    <string name="offline_cached">غير متصل • عرض التوقعات المحفوظة</string>
+    <string name="current_location_badge">الموقع الحالي</string>
+
+    <!-- Sections -->
+    <string name="section_hourly">توقعات ٢٤ ساعة</string>
+    <string name="section_daily">توقعات ٧ أيام</string>
+    <string name="section_details">التفاصيل الجوية</string>
+    <string name="now_label">الآن</string>
+    <string name="today_label">اليوم</string>
+    <string name="tomorrow_label">غداً</string>
+
+    <!-- Metrics -->
+    <string name="metric_aqi">جودة الهواء</string>
+    <string name="metric_uv">الأشعة فوق البنفسجية</string>
+    <string name="metric_wind">الرياح</string>
+    <string name="metric_humidity">الرطوبة</string>
+    <string name="metric_sunrise_sunset">مسار الشمس</string>
+    <string name="metric_pressure">الضغط الجوي</string>
+    <string name="metric_visibility">مدى الرؤية</string>
+    <string name="metric_precipitation">الهطول</string>
+    <string name="wind_gusts">هبات %1$s</string>
+    <string name="cloud_cover_label">غطاء السحب %1$d%%</string>
+    <string name="sunrise_label">الشروق</string>
+    <string name="sunset_label">الغروب</string>
+    <string name="pm25_label">PM2.5: %1$s مكغ/م³</string>
+    <string name="pm10_label">PM10: %1$s مكغ/م³</string>
+    <string name="dew_comfort_dry">هواء جاف</string>
+    <string name="dew_comfort_comfortable">مريح</string>
+    <string name="dew_comfort_humid">رطب</string>
+
+    <!-- Units -->
+    <string name="unit_kmh">كم/س</string>
+    <string name="unit_mph">ميل/س</string>
+    <string name="unit_hpa">هكتوباسكال</string>
+    <string name="unit_km">كم</string>
+    <string name="unit_mi">ميل</string>
+    <string name="unit_mm">مم</string>
+
+    <!-- AQI Levels -->
+    <string name="aqi_good">جيد</string>
+    <string name="aqi_moderate">متوسط</string>
+    <string name="aqi_sensitive">معتدل للحساسين</string>
+    <string name="aqi_unhealthy">غير صحي</string>
+    <string name="aqi_very_unhealthy">غير صحي جداً</string>
+    <string name="aqi_hazardous">خطير</string>
+    <string name="aqi_unavailable">غير متوفر</string>
+
+    <!-- UV Levels -->
+    <string name="uv_low">منخفض</string>
+    <string name="uv_moderate">متوسط</string>
+    <string name="uv_high">مرتفع</string>
+    <string name="uv_very_high">مرتفع جداً</string>
+    <string name="uv_extreme">شديد</string>
+
+    <!-- Wind Directions -->
+    <string name="dir_n">شمال</string>
+    <string name="dir_ne">شمال شرق</string>
+    <string name="dir_e">شرق</string>
+    <string name="dir_se">جنوب شرق</string>
+    <string name="dir_s">جنوب</string>
+    <string name="dir_sw">جنوب غرب</string>
+    <string name="dir_w">غرب</string>
+    <string name="dir_nw">شمال غرب</string>
+
+    <!-- Weather Conditions (WMO Codes) -->
+    <string name="weather_clear">سماء صافية</string>
+    <string name="weather_mainly_clear">صافٍ غالباً</string>
+    <string name="weather_partly_cloudy">غائم جزئياً</string>
+    <string name="weather_overcast">غائم كلياً</string>
+    <string name="weather_fog">ضباب</string>
+    <string name="weather_drizzle">رذاذ خفيف</string>
+    <string name="weather_drizzle_dense">رذاذ</string>
+    <string name="weather_rain_light">أمطار خفيفة</string>
+    <string name="weather_rain_moderate">أمطار متوسطة</string>
+    <string name="weather_rain_heavy">أمطار غزيرة</string>
+    <string name="weather_freezing_rain">أمطار متجمدة</string>
+    <string name="weather_snow_light">ثلوج خفيفة</string>
+    <string name="weather_snow_heavy">ثلوج كثيفة</string>
+    <string name="weather_rain_showers">زخات مطر</string>
+    <string name="weather_snow_showers">زخات ثلجية</string>
+    <string name="weather_thunderstorm">عاصفة رعدية</string>
+    <string name="weather_thunderstorm_hail">عاصفة رعدية وبَرَد</string>
+
+    <!-- Cities & Search -->
+    <string name="cities_title">المدن والمواقع</string>
+    <string name="search_city_hint">ابحث عن مدينة (عربي أو English)…</string>
+    <string name="saved_cities_header">المدن المحفوظة</string>
+    <string name="search_results_header">نتائج البحث</string>
+    <string name="popular_cities_header">مدن مقترحة</string>
+    <string name="no_results">لم يتم العثور على مدن مطابقة</string>
+    <string name="searching">جارٍ البحث…</string>
+    <string name="use_my_location">استخدام موقعي الحالي</string>
+    <string name="location_prompt_title">الطقس لموقعك الحالي</string>
+    <string name="location_permission_rationale">اسمح بالوصول إلى الموقع التقريبي لجلب حالة الطقس المباشرة بناءً على إحداثياتك الحالية.</string>
+    <string name="allow_location">السماح بالموقع</string>
+    <string name="not_now">ليس الآن</string>
+    <string name="open_settings">الإعدادات</string>
+    <string name="location_denied_message">تم رفض إذن الموقع. يمكنك تفعيله من الإعدادات أو البحث عن مدينة يدوياً.</string>
+    <string name="location_disabled_message">خدمات الموقع متوقفة على الجهاز. يرجى تفعيل الموقع لجلب الطقس المحلي.</string>
+    <string name="location_unavailable_message">تعذر تحديد إحداثيات الجهاز. يتم عرض المدينة المحفوظة.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">التفضيلات</string>
+    <string name="setting_language">اللغة</string>
+    <string name="lang_system">النظام</string>
+    <string name="lang_english">English</string>
+    <string name="lang_arabic">العربية</string>
+    <string name="setting_theme">المظهر</string>
+    <string name="theme_system">النظام</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_dark">داكن</string>
+    <string name="setting_temp_unit">وحدة الحرارة</string>
+    <string name="unit_celsius">مئوية (°C)</string>
+    <string name="unit_fahrenheit">فهرنهايت (°F)</string>
+    <string name="setting_wind_unit">وحدة سرعة الرياح</string>
+    <string name="data_source_note">التوقعات المباشرة وجودة الهواء من Open-Meteo</string>
+
+    <!-- Loading & Error -->
+    <string name="loading_weather">جارٍ جلب توقعات الطقس…</string>
+    <string name="error_load_weather">تعذر تحميل بيانات الطقس. تحقق من اتصالك وأعد المحاولة.</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="done">تم</string>
+    <string name="language_chip">EN</string>
+</resources>

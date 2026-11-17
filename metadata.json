@@ -1,0 +1,6 @@
+{
+  "name": "SkyPulse",
+  "description": "Comprehensive bilingual (Arabic & English) weather forecast app with real-time conditions, 24-hour and 7-day forecasts, air quality, dark mode, and saved cities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
