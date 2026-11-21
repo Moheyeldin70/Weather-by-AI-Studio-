@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.util.Locale
-import kotlin.math.abs
 
 sealed interface WeatherResult {
     data class Live(val bundle: WeatherBundle) : WeatherResult
@@ -42,12 +41,14 @@ class WeatherRepository(
     private val bundleAdapter = NetworkModule.moshi.adapter(WeatherBundle::class.java)
 
     val savedCitiesFlow: Flow<List<SavedCity>> =
-        savedCityDao.observeCities().map { entities -> entities.map { it.toDomain() } }
+        savedCityDao.observeCities().map { entities ->
+            entities.map { entity -> enrichPopularTranslations(entity.toDomain()) }
+        }
 
     suspend fun ensureDefaultCity(): SavedCity = withContext(Dispatchers.IO) {
         val existing = savedCityDao.getCitiesOnce()
         if (existing.isNotEmpty()) {
-            return@withContext existing.first().toDomain()
+            return@withContext enrichPopularTranslations(existing.first().toDomain())
         }
         val defaultCity = popularCities.first()
         savedCityDao.upsertCity(SavedCityEntity.fromDomain(defaultCity))
@@ -55,11 +56,11 @@ class WeatherRepository(
     }
 
     suspend fun getCityById(cityId: String): SavedCity? = withContext(Dispatchers.IO) {
-        savedCityDao.getCityById(cityId)?.toDomain()
+        savedCityDao.getCityById(cityId)?.toDomain()?.let { enrichPopularTranslations(it) }
     }
 
     suspend fun saveCity(city: SavedCity) = withContext(Dispatchers.IO) {
-        savedCityDao.upsertCity(SavedCityEntity.fromDomain(city))
+        savedCityDao.upsertCity(SavedCityEntity.fromDomain(enrichPopularTranslations(city)))
     }
 
     suspend fun upsertCurrentGpsCity(detected: DetectedLocation): SavedCity = withContext(Dispatchers.IO) {
@@ -69,6 +70,8 @@ class WeatherRepository(
             nameAr = detected.nameAr,
             countryEn = detected.countryEn,
             countryAr = detected.countryAr,
+            localizedNames = detected.localizedNames,
+            localizedCountries = detected.localizedCountries,
             latitude = detected.latitude,
             longitude = detected.longitude,
             isCurrentLocation = true,
@@ -181,8 +184,7 @@ class WeatherRepository(
             )
         }
 
-        // Match current hour in hourly list for current UV & visibility
-        val currentHourPrefix = currentDto.time.take(13) // "YYYY-MM-DDTHH"
+        val currentHourPrefix = currentDto.time.take(13)
         val matchingHour = hourlyList.firstOrNull { it.timeIso.startsWith(currentHourPrefix) }
             ?: hourlyList.firstOrNull()
 
@@ -203,7 +205,6 @@ class WeatherRepository(
             visibilityMeters = matchingHour?.visibilityMeters ?: 10000.0
         )
 
-        // Filter hourly to 24 hours starting from current hour
         val startIndex = hourlyList.indexOfFirst { it.timeIso >= currentDto.time.take(13) }
             .takeIf { it >= 0 } ?: 0
         val next24Hours = hourlyList.drop(startIndex).take(24)
@@ -239,13 +240,13 @@ class WeatherRepository(
         )
     }
 
-    suspend fun searchCities(query: String, isArabicUi: Boolean): List<GeocodingCity> =
+    suspend fun searchCities(query: String, languageCode: String): List<GeocodingCity> =
         withContext(Dispatchers.IO) {
             val trimmed = query.trim()
             if (trimmed.length < 2) return@withContext emptyList()
 
-            val primaryLang = if (isArabicUi) "ar" else "en"
-            val secondaryLang = if (isArabicUi) "en" else "ar"
+            val primaryLang = languageCode.lowercase().ifBlank { "en" }
+            val secondaryLang = if (primaryLang == "en") "ar" else "en"
 
             coroutineScope {
                 val primaryDeferred = async {
@@ -266,10 +267,21 @@ class WeatherRepository(
                 primaryList.map { item ->
                     val alt = secondaryById[item.id]
                     val nameEn = if (primaryLang == "en") item.name else (alt?.name ?: item.name)
-                    val nameAr = if (primaryLang == "ar") item.name else (alt?.name ?: item.name)
+                    val nameAr = if (primaryLang == "ar") item.name else (if (secondaryLang == "ar") alt?.name ?: item.name else item.name)
                     val countryEn = if (primaryLang == "en") (item.country ?: "") else (alt?.country ?: item.country ?: "")
-                    val countryAr = if (primaryLang == "ar") (item.country ?: "") else (alt?.country ?: item.country ?: "")
+                    val countryAr = if (primaryLang == "ar") (item.country ?: "") else (if (secondaryLang == "ar") alt?.country ?: (item.country ?: "") else (item.country ?: ""))
                     val cityId = String.format(Locale.US, "%.3f_%.3f", item.latitude, item.longitude)
+
+                    val localizedNames = buildMap {
+                        put(primaryLang, item.name)
+                        put("en", nameEn)
+                        if (primaryLang == "ar" || secondaryLang == "ar") put("ar", nameAr)
+                    }
+                    val localizedCountries = buildMap {
+                        if (!item.country.isNullOrBlank()) put(primaryLang, item.country)
+                        if (countryEn.isNotBlank()) put("en", countryEn)
+                        if ((primaryLang == "ar" || secondaryLang == "ar") && countryAr.isNotBlank()) put("ar", countryAr)
+                    }
 
                     GeocodingCity(
                         id = cityId,
@@ -279,13 +291,14 @@ class WeatherRepository(
                         country = item.country ?: "",
                         countryEn = countryEn,
                         countryAr = countryAr,
+                        localizedNames = localizedNames,
+                        localizedCountries = localizedCountries,
                         admin1 = item.admin1,
                         latitude = item.latitude,
                         longitude = item.longitude,
                         countryCode = item.countryCode
                     )
                 }.distinctBy {
-                    // Deduplicate nearby identical matches
                     "${(it.latitude * 100).toInt()}_${(it.longitude * 100).toInt()}_${it.nameEn}"
                 }
             }
@@ -293,9 +306,17 @@ class WeatherRepository(
 
     fun getSuggestedPopularCities(): List<SavedCity> = popularCities
 
+    private fun enrichPopularTranslations(city: SavedCity): SavedCity {
+        val popularMatch = popularCities.firstOrNull { it.id == city.id } ?: return city
+        return city.copy(
+            localizedNames = popularMatch.localizedNames + city.localizedNames,
+            localizedCountries = popularMatch.localizedCountries + city.localizedCountries
+        )
+    }
+
     companion object {
         const val CURRENT_LOCATION_ID = "current_gps"
-        private const val CACHE_FRESH_MS = 10 * 60 * 1000L // 10 minutes
+        private const val CACHE_FRESH_MS = 10 * 60 * 1000L
 
         val popularCities = listOf(
             SavedCity(
@@ -304,6 +325,16 @@ class WeatherRepository(
                 nameAr = "القاهرة",
                 countryEn = "Egypt",
                 countryAr = "مصر",
+                localizedNames = mapOf(
+                    "en" to "Cairo", "ar" to "القاهرة", "ja" to "カイロ", "zh" to "开罗",
+                    "fr" to "Le Caire", "es" to "El Cairo", "de" to "Kairo", "it" to "Il Cairo",
+                    "pt" to "Cairo", "ko" to "카이로", "ru" to "Каир", "tr" to "Kahire"
+                ),
+                localizedCountries = mapOf(
+                    "en" to "Egypt", "ar" to "مصر", "ja" to "エジプト", "zh" to "埃及",
+                    "fr" to "Égypte", "es" to "Egipto", "de" to "Ägypten", "it" to "Egitto",
+                    "pt" to "Egito", "ko" to "이집트", "ru" to "Египет", "tr" to "Mısır"
+                ),
                 latitude = 30.0444,
                 longitude = 31.2357
             ),
@@ -313,6 +344,17 @@ class WeatherRepository(
                 nameAr = "الرياض",
                 countryEn = "Saudi Arabia",
                 countryAr = "المملكة العربية السعودية",
+                localizedNames = mapOf(
+                    "en" to "Riyadh", "ar" to "الرياض", "ja" to "リヤド", "zh" to "利雅得",
+                    "fr" to "Riyad", "es" to "Riad", "de" to "Riad", "it" to "Riyad",
+                    "pt" to "Riade", "ko" to "리야드", "ru" to "Эр-Рияд", "tr" to "Riyad"
+                ),
+                localizedCountries = mapOf(
+                    "en" to "Saudi Arabia", "ar" to "السعودية", "ja" to "サウジアラビア", "zh" to "沙特阿拉伯",
+                    "fr" to "Arabie saoudite", "es" to "Arabia Saudita", "de" to "Saudi-Arabien",
+                    "it" to "Arabia Saudita", "pt" to "Arábia Saudita", "ko" to "사우디아라비아",
+                    "ru" to "Саудовская Аравия", "tr" to "Suudi Arabistan"
+                ),
                 latitude = 24.7136,
                 longitude = 46.6753
             ),
@@ -322,6 +364,17 @@ class WeatherRepository(
                 nameAr = "دبي",
                 countryEn = "United Arab Emirates",
                 countryAr = "الإمارات العربية المتحدة",
+                localizedNames = mapOf(
+                    "en" to "Dubai", "ar" to "دبي", "ja" to "ドバイ", "zh" to "迪拜",
+                    "fr" to "Dubaï", "es" to "Dubái", "de" to "Dubai", "it" to "Dubai",
+                    "pt" to "Dubai", "ko" to "두바이", "ru" to "Дубай", "tr" to "Dubai"
+                ),
+                localizedCountries = mapOf(
+                    "en" to "United Arab Emirates", "ar" to "الإمارات", "ja" to "アラブ首長国連邦",
+                    "zh" to "阿联酋", "fr" to "Émirats arabes unis", "es" to "Emiratos Árabes Unidos",
+                    "de" to "Vereinigte Arabische Emirate", "it" to "Emirati Arabi Uniti",
+                    "pt" to "Emirados Árabes Unidos", "ko" to "아랍에미리트", "ru" to "ОАЭ", "tr" to "BAE"
+                ),
                 latitude = 25.2048,
                 longitude = 55.2708
             ),
@@ -331,8 +384,38 @@ class WeatherRepository(
                 nameAr = "لندن",
                 countryEn = "United Kingdom",
                 countryAr = "المملكة المتحدة",
+                localizedNames = mapOf(
+                    "en" to "London", "ar" to "لندن", "ja" to "ロンドン", "zh" to "伦敦",
+                    "fr" to "Londres", "es" to "Londres", "de" to "London", "it" to "Londra",
+                    "pt" to "Londres", "ko" to "런던", "ru" to "Лондон", "tr" to "Londra"
+                ),
+                localizedCountries = mapOf(
+                    "en" to "United Kingdom", "ar" to "المملكة المتحدة", "ja" to "イギリス", "zh" to "英国",
+                    "fr" to "Royaume-Uni", "es" to "Reino Unido", "de" to "Vereinigtes Königreich",
+                    "it" to "Regno Unito", "pt" to "Reino Unido", "ko" to "영국",
+                    "ru" to "Великобритания", "tr" to "Birleşik Krallık"
+                ),
                 latitude = 51.5074,
                 longitude = -0.1278
+            ),
+            SavedCity(
+                id = "48.857_2.352",
+                nameEn = "Paris",
+                nameAr = "باريس",
+                countryEn = "France",
+                countryAr = "فرنسا",
+                localizedNames = mapOf(
+                    "en" to "Paris", "ar" to "باريس", "ja" to "パリ", "zh" to "巴黎",
+                    "fr" to "Paris", "es" to "París", "de" to "Paris", "it" to "Parigi",
+                    "pt" to "Paris", "ko" to "파리", "ru" to "Париж", "tr" to "Paris"
+                ),
+                localizedCountries = mapOf(
+                    "en" to "France", "ar" to "فرنسا", "ja" to "フランス", "zh" to "法国",
+                    "fr" to "France", "es" to "Francia", "de" to "Frankreich", "it" to "Francia",
+                    "pt" to "França", "ko" to "프랑스", "ru" to "Франция", "tr" to "Fransa"
+                ),
+                latitude = 48.8566,
+                longitude = 2.3522
             ),
             SavedCity(
                 id = "40.713_-74.006",
@@ -340,6 +423,17 @@ class WeatherRepository(
                 nameAr = "نيويورك",
                 countryEn = "United States",
                 countryAr = "الولايات المتحدة",
+                localizedNames = mapOf(
+                    "en" to "New York", "ar" to "نيويورك", "ja" to "ニューヨーク", "zh" to "纽约",
+                    "fr" to "New York", "es" to "Nueva York", "de" to "New York", "it" to "New York",
+                    "pt" to "Nova Iorque", "ko" to "뉴욕", "ru" to "Нью-Йорк", "tr" to "New York"
+                ),
+                localizedCountries = mapOf(
+                    "en" to "United States", "ar" to "الولايات المتحدة", "ja" to "アメリカ", "zh" to "美国",
+                    "fr" to "États-Unis", "es" to "Estados Unidos", "de" to "Vereinigte Staaten",
+                    "it" to "Stati Uniti", "pt" to "Estados Unidos", "ko" to "미국",
+                    "ru" to "США", "tr" to "ABD"
+                ),
                 latitude = 40.7128,
                 longitude = -74.0060
             ),
@@ -349,13 +443,38 @@ class WeatherRepository(
                 nameAr = "طوكيو",
                 countryEn = "Japan",
                 countryAr = "اليابان",
+                localizedNames = mapOf(
+                    "en" to "Tokyo", "ar" to "طوكيو", "ja" to "東京", "zh" to "东京",
+                    "fr" to "Tokyo", "es" to "Tokio", "de" to "Tokio", "it" to "Tokyo",
+                    "pt" to "Tóquio", "ko" to "도쿄", "ru" to "Токио", "tr" to "Tokyo"
+                ),
+                localizedCountries = mapOf(
+                    "en" to "Japan", "ar" to "اليابان", "ja" to "日本", "zh" to "日本",
+                    "fr" to "Japon", "es" to "Japón", "de" to "Japan", "it" to "Giappone",
+                    "pt" to "Japão", "ko" to "일본", "ru" to "Япония", "tr" to "Japonya"
+                ),
                 latitude = 35.6762,
                 longitude = 139.6503
+            ),
+            SavedCity(
+                id = "52.520_13.405",
+                nameEn = "Berlin",
+                nameAr = "برلين",
+                countryEn = "Germany",
+                countryAr = "ألمانيا",
+                localizedNames = mapOf(
+                    "en" to "Berlin", "ar" to "برلين", "ja" to "ベルリン", "zh" to "柏林",
+                    "fr" to "Berlin", "es" to "Berlín", "de" to "Berlin", "it" to "Berlino",
+                    "pt" to "Berlim", "ko" to "베를린", "ru" to "Берлин", "tr" to "Berlin"
+                ),
+                localizedCountries = mapOf(
+                    "en" to "Germany", "ar" to "ألمانيا", "ja" to "ドイツ", "zh" to "德国",
+                    "fr" to "Allemagne", "es" to "Alemania", "de" to "Deutschland", "it" to "Germania",
+                    "pt" to "Alemanha", "ko" to "독일", "ru" to "Германия", "tr" to "Almanya"
+                ),
+                latitude = 52.5200,
+                longitude = 13.4050
             )
         )
-
-        fun isSameCoords(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Boolean {
-            return abs(lat1 - lat2) < 0.01 && abs(lon1 - lon2) < 0.01
-        }
     }
 }

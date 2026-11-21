@@ -11,6 +11,8 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.data.model.SavedCity
+import com.example.data.remote.NetworkModule
+import com.squareup.moshi.Types
 import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "saved_cities")
@@ -20,6 +22,8 @@ data class SavedCityEntity(
     val nameAr: String,
     val countryEn: String,
     val countryAr: String,
+    val localizedNamesJson: String = "{}",
+    val localizedCountriesJson: String = "{}",
     val admin1: String?,
     val latitude: Double,
     val longitude: Double,
@@ -37,6 +41,8 @@ data class SavedCityEntity(
         nameAr = nameAr,
         countryEn = countryEn,
         countryAr = countryAr,
+        localizedNames = decodeMap(localizedNamesJson),
+        localizedCountries = decodeMap(localizedCountriesJson),
         admin1 = admin1,
         latitude = latitude,
         longitude = longitude,
@@ -50,12 +56,25 @@ data class SavedCityEntity(
     )
 
     companion object {
+        private val mapAdapter = NetworkModule.moshi.adapter<Map<String, String>>(
+            Types.newParameterizedType(Map::class.java, String::class.java, String::class.java)
+        )
+
+        private fun encodeMap(map: Map<String, String>): String =
+            if (map.isEmpty()) "{}" else runCatching { mapAdapter.toJson(map) }.getOrDefault("{}")
+
+        private fun decodeMap(json: String): Map<String, String> =
+            if (json.isBlank() || json == "{}") emptyMap()
+            else runCatching { mapAdapter.fromJson(json) }.getOrNull().orEmpty()
+
         fun fromDomain(city: SavedCity): SavedCityEntity = SavedCityEntity(
             id = city.id,
             nameEn = city.nameEn,
             nameAr = city.nameAr,
             countryEn = city.countryEn,
             countryAr = city.countryAr,
+            localizedNamesJson = encodeMap(city.localizedNames),
+            localizedCountriesJson = encodeMap(city.localizedCountries),
             admin1 = city.admin1,
             latitude = city.latitude,
             longitude = city.longitude,
@@ -123,7 +142,7 @@ interface CachedForecastDao {
 
 @Database(
     entities = [SavedCityEntity::class, CachedForecastEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class WeatherDatabase : RoomDatabase() {
@@ -140,7 +159,10 @@ abstract class WeatherDatabase : RoomDatabase() {
                     context.applicationContext,
                     WeatherDatabase::class.java,
                     "skypulse_weather.db"
-                ).build().also { INSTANCE = it }
+                )
+                    .fallbackToDestructiveMigration(true)
+                    .build()
+                    .also { INSTANCE = it }
             }
         }
     }

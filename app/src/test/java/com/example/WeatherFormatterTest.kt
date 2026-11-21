@@ -6,6 +6,7 @@ import com.example.ui.utils.WeatherFormatter
 import com.example.ui.utils.WeatherMood
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.util.Locale
 
 class WeatherFormatterTest {
 
@@ -32,10 +33,24 @@ class WeatherFormatterTest {
     }
 
     @Test
-    fun `hour label formats correctly in english and arabic`() {
-        assertEquals("3 PM", WeatherFormatter.formatHourLabel("2026-11-17T15:00", isArabic = false))
-        assertEquals("3 م", WeatherFormatter.formatHourLabel("2026-11-17T15:00", isArabic = true))
-        assertEquals("12 AM", WeatherFormatter.formatHourLabel("2026-11-17T00:00", isArabic = false))
+    fun `hour label formats correctly across supported locales`() {
+        val arabic = Locale.forLanguageTag("ar")
+        assertEquals("3 PM", WeatherFormatter.formatHourLabel("2026-11-17T15:00", Locale.ENGLISH))
+        assertEquals("3 م", WeatherFormatter.formatHourLabel("2026-11-17T15:00", arabic))
+        assertEquals("12 AM", WeatherFormatter.formatHourLabel("2026-11-17T00:00", Locale.ENGLISH))
+        assertEquals("15:00", WeatherFormatter.formatHourLabel("2026-11-17T15:00", Locale.JAPANESE))
+        assertEquals("15:00", WeatherFormatter.formatHourLabel("2026-11-17T15:00", Locale.CHINESE))
+        assertEquals("15:00", WeatherFormatter.formatHourLabel("2026-11-17T15:00", Locale.FRENCH))
+        assertEquals("15:00", WeatherFormatter.formatHourLabel("2026-11-17T15:00", Locale.GERMAN))
+    }
+
+    @Test
+    fun `clock time formats correctly across supported locales`() {
+        val arabic = Locale.forLanguageTag("ar")
+        assertEquals("6:30 AM", WeatherFormatter.formatClockTime("2026-11-17T06:30", Locale.ENGLISH))
+        assertEquals("5:45 م", WeatherFormatter.formatClockTime("2026-11-17T17:45", arabic))
+        assertEquals("17:45", WeatherFormatter.formatClockTime("2026-11-17T17:45", Locale.JAPANESE))
+        assertEquals("06:30", WeatherFormatter.formatClockTime("2026-11-17T06:30", Locale.FRENCH))
     }
 
     @Test

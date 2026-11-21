@@ -1,0 +1,144 @@
+<resources>
+    <string name="app_name">SkyPulse</string>
+
+    <!-- Navigation & Top Bar -->
+    <string name="cd_open_cities">Выбрать город</string>
+    <string name="cd_use_gps">Текущее местоположение</string>
+    <string name="cd_refresh">Обновить погоду</string>
+    <string name="cd_settings">Настройки</string>
+    <string name="cd_toggle_language">Сменить язык</string>
+    <string name="cd_close">Закрыть</string>
+    <string name="cd_back">Назад</string>
+    <string name="cd_delete_city">Удалить город</string>
+    <string name="cd_add_city">Сохранить город</string>
+    <string name="cd_hero_sky">Иллюстрация неба</string>
+
+    <!-- Hero & Summary -->
+    <string name="feels_like">Ощущается %1$s</string>
+    <string name="high_low">Макс:%1$s  •  Мин:%2$s</string>
+    <string name="updated_just_now">Обновлено только что</string>
+    <string name="updated_time">Обновлено %1$s</string>
+    <string name="offline_cached">Офлайн • Сохранённый прогноз</string>
+    <string name="current_location_badge">Текущее место</string>
+
+    <!-- Sections -->
+    <string name="section_hourly">Прогноз на 24 ч</string>
+    <string name="section_daily">Прогноз на 7 дней</string>
+    <string name="section_details">Атмосферные детали</string>
+    <string name="now_label">Сейчас</string>
+    <string name="today_label">Сегодня</string>
+    <string name="tomorrow_label">Завтра</string>
+
+    <!-- Metrics -->
+    <string name="metric_aqi">Качество воздуха</string>
+    <string name="metric_uv">УФ-индекс</string>
+    <string name="metric_wind">Ветер</string>
+    <string name="metric_humidity">Влажность</string>
+    <string name="metric_sunrise_sunset">Путь солнца</string>
+    <string name="metric_pressure">Давление</string>
+    <string name="metric_visibility">Видимость</string>
+    <string name="metric_precipitation">Осадки</string>
+    <string name="wind_gusts">Порывы %1$s</string>
+    <string name="cloud_cover_label">Облачность %1$d%%</string>
+    <string name="sunrise_label">Восход</string>
+    <string name="sunset_label">Закат</string>
+    <string name="pm25_label">PM2.5: %1$s мкг/м³</string>
+    <string name="pm10_label">PM10: %1$s мкг/м³</string>
+    <string name="dew_comfort_dry">Сухой воздух</string>
+    <string name="dew_comfort_comfortable">Комфортно</string>
+    <string name="dew_comfort_humid">Влажно</string>
+
+    <!-- Units -->
+    <string name="unit_kmh">км/ч</string>
+    <string name="unit_mph">миль/ч</string>
+    <string name="unit_hpa">гПа</string>
+    <string name="unit_km">км</string>
+    <string name="unit_mi">миль</string>
+    <string name="unit_mm">мм</string>
+
+    <!-- AQI Levels -->
+    <string name="aqi_good">Хорошо</string>
+    <string name="aqi_moderate">Умеренно</string>
+    <string name="aqi_sensitive">Для чувствительных</string>
+    <string name="aqi_unhealthy">Вредно</string>
+    <string name="aqi_very_unhealthy">Очень вредно</string>
+    <string name="aqi_hazardous">Опасно</string>
+    <string name="aqi_unavailable">Недоступно</string>
+
+    <!-- UV Levels -->
+    <string name="uv_low">Низкий</string>
+    <string name="uv_moderate">Умеренный</string>
+    <string name="uv_high">Высокий</string>
+    <string name="uv_very_high">Очень высокий</string>
+    <string name="uv_extreme">Экстремальный</string>
+
+    <!-- Wind Directions -->
+    <string name="dir_n">С</string>
+    <string name="dir_ne">СВ</string>
+    <string name="dir_e">В</string>
+    <string name="dir_se">ЮВ</string>
+    <string name="dir_s">Ю</string>
+    <string name="dir_sw">ЮЗ</string>
+    <string name="dir_w">З</string>
+    <string name="dir_nw">СЗ</string>
+
+    <!-- Weather Conditions (WMO Codes) -->
+    <string name="weather_clear">Ясно</string>
+    <string name="weather_mainly_clear">Преимущественно ясно</string>
+    <string name="weather_partly_cloudy">Переменная облачность</string>
+    <string name="weather_overcast">Пасмурно</string>
+    <string name="weather_fog">Туман</string>
+    <string name="weather_drizzle">Слабая морось</string>
+    <string name="weather_drizzle_dense">Морось</string>
+    <string name="weather_rain_light">Небольшой дождь</string>
+    <string name="weather_rain_moderate">Умеренный дождь</string>
+    <string name="weather_rain_heavy">Сильный дождь</string>
+    <string name="weather_freezing_rain">Ледяной дождь</string>
+    <string name="weather_snow_light">Небольшой снег</string>
+    <string name="weather_snow_heavy">Сильный снег</string>
+    <string name="weather_rain_showers">Ливень</string>
+    <string name="weather_snow_showers">Снегопад</string>
+    <string name="weather_thunderstorm">Гроза</string>
+    <string name="weather_thunderstorm_hail">Гроза с градом</string>
+
+    <!-- Cities & Search -->
+    <string name="cities_title">Города</string>
+    <string name="search_city_hint">Поиск города по миру…</string>
+    <string name="saved_cities_header">Сохранённые города</string>
+    <string name="search_results_header">Результаты поиска</string>
+    <string name="popular_cities_header">Популярные города</string>
+    <string name="no_results">Города не найдены</string>
+    <string name="searching">Поиск…</string>
+    <string name="use_my_location">Использовать GPS</string>
+    <string name="location_prompt_title">Местный прогноз</string>
+    <string name="location_permission_rationale">Разрешите доступ к примерной геолокации, чтобы загрузить погоду по вашим координатам.</string>
+    <string name="allow_location">Разрешить</string>
+    <string name="not_now">Не сейчас</string>
+    <string name="open_settings">Настройки</string>
+    <string name="location_denied_message">Доступ к геолокации запрещён. Включите его в настройках или найдите город.</string>
+    <string name="location_disabled_message">Службы геолокации отключены на устройстве.</string>
+    <string name="location_unavailable_message">Не удалось определить координаты. Показан сохранённый город.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Настройки</string>
+    <string name="setting_language">Язык</string>
+    <string name="lang_system">Система</string>
+    <string name="lang_english">English</string>
+    <string name="lang_arabic">العربية</string>
+    <string name="setting_theme">Оформление</string>
+    <string name="theme_system">Система</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="setting_temp_unit">Единица температуры</string>
+    <string name="unit_celsius">Цельсий (°C)</string>
+    <string name="unit_fahrenheit">Фаренгейт (°F)</string>
+    <string name="setting_wind_unit">Единица скорости ветра</string>
+    <string name="data_source_note">Прогноз и качество воздуха: Open-Meteo</string>
+
+    <!-- Loading & Error -->
+    <string name="loading_weather">Загрузка прогноза…</string>
+    <string name="error_load_weather">Не удалось загрузить погоду. Проверьте соединение.</string>
+    <string name="retry">Повторить</string>
+    <string name="done">Готово</string>
+    <string name="language_chip">RU</string>
+</resources>

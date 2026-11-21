@@ -1,0 +1,144 @@
+<resources>
+    <string name="app_name">SkyPulse</string>
+
+    <!-- Navigation & Top Bar -->
+    <string name="cd_open_cities">Selecionar cidade</string>
+    <string name="cd_use_gps">Usar localização atual</string>
+    <string name="cd_refresh">Atualizar clima</string>
+    <string name="cd_settings">Configurações</string>
+    <string name="cd_toggle_language">Mudar idioma</string>
+    <string name="cd_close">Fechar</string>
+    <string name="cd_back">Voltar</string>
+    <string name="cd_delete_city">Remover cidade</string>
+    <string name="cd_add_city">Salvar cidade</string>
+    <string name="cd_hero_sky">Ilustração do céu</string>
+
+    <!-- Hero & Summary -->
+    <string name="feels_like">Sensação %1$s</string>
+    <string name="high_low">Máx:%1$s  •  Mín:%2$s</string>
+    <string name="updated_just_now">Atualizado agora</string>
+    <string name="updated_time">Atualizado %1$s</string>
+    <string name="offline_cached">Offline • Previsão salva</string>
+    <string name="current_location_badge">Localização atual</string>
+
+    <!-- Sections -->
+    <string name="section_hourly">Previsão 24 h</string>
+    <string name="section_daily">Previsão 7 dias</string>
+    <string name="section_details">Detalhes atmosféricos</string>
+    <string name="now_label">Agora</string>
+    <string name="today_label">Hoje</string>
+    <string name="tomorrow_label">Amanhã</string>
+
+    <!-- Metrics -->
+    <string name="metric_aqi">Qualidade do ar</string>
+    <string name="metric_uv">Índice UV</string>
+    <string name="metric_wind">Vento</string>
+    <string name="metric_humidity">Umidade</string>
+    <string name="metric_sunrise_sunset">Trajeto solar</string>
+    <string name="metric_pressure">Pressão</string>
+    <string name="metric_visibility">Visibilidade</string>
+    <string name="metric_precipitation">Precipitação</string>
+    <string name="wind_gusts">Rajadas %1$s</string>
+    <string name="cloud_cover_label">Nebulosidade %1$d%%</string>
+    <string name="sunrise_label">Nascer do sol</string>
+    <string name="sunset_label">Pôr do sol</string>
+    <string name="pm25_label">PM2.5: %1$s µg/m³</string>
+    <string name="pm10_label">PM10: %1$s µg/m³</string>
+    <string name="dew_comfort_dry">Ar seco</string>
+    <string name="dew_comfort_comfortable">Agradável</string>
+    <string name="dew_comfort_humid">Úmido</string>
+
+    <!-- Units -->
+    <string name="unit_kmh">km/h</string>
+    <string name="unit_mph">mph</string>
+    <string name="unit_hpa">hPa</string>
+    <string name="unit_km">km</string>
+    <string name="unit_mi">mi</string>
+    <string name="unit_mm">mm</string>
+
+    <!-- AQI Levels -->
+    <string name="aqi_good">Bom</string>
+    <string name="aqi_moderate">Moderado</string>
+    <string name="aqi_sensitive">Sensível</string>
+    <string name="aqi_unhealthy">Insalubre</string>
+    <string name="aqi_very_unhealthy">Muito insalubre</string>
+    <string name="aqi_hazardous">Perigoso</string>
+    <string name="aqi_unavailable">Indisponível</string>
+
+    <!-- UV Levels -->
+    <string name="uv_low">Baixo</string>
+    <string name="uv_moderate">Moderado</string>
+    <string name="uv_high">Alto</string>
+    <string name="uv_very_high">Muito alto</string>
+    <string name="uv_extreme">Extremo</string>
+
+    <!-- Wind Directions -->
+    <string name="dir_n">N</string>
+    <string name="dir_ne">NE</string>
+    <string name="dir_e">L</string>
+    <string name="dir_se">SE</string>
+    <string name="dir_s">S</string>
+    <string name="dir_sw">SO</string>
+    <string name="dir_w">O</string>
+    <string name="dir_nw">NO</string>
+
+    <!-- Weather Conditions (WMO Codes) -->
+    <string name="weather_clear">Céu limpo</string>
+    <string name="weather_mainly_clear">Predom. limpo</string>
+    <string name="weather_partly_cloudy">Parcialmente nublado</string>
+    <string name="weather_overcast">Nublado</string>
+    <string name="weather_fog">Nevoeiro</string>
+    <string name="weather_drizzle">Chuvisco leve</string>
+    <string name="weather_drizzle_dense">Chuvisco</string>
+    <string name="weather_rain_light">Chuva fraca</string>
+    <string name="weather_rain_moderate">Chuva moderada</string>
+    <string name="weather_rain_heavy">Chuva forte</string>
+    <string name="weather_freezing_rain">Chuva congelante</string>
+    <string name="weather_snow_light">Neve fraca</string>
+    <string name="weather_snow_heavy">Neve forte</string>
+    <string name="weather_rain_showers">Pancadas de chuva</string>
+    <string name="weather_snow_showers">Pancadas de neve</string>
+    <string name="weather_thunderstorm">Trovoada</string>
+    <string name="weather_thunderstorm_hail">Trovoada com granizo</string>
+
+    <!-- Cities & Search -->
+    <string name="cities_title">Locais</string>
+    <string name="search_city_hint">Buscar cidade no mundo…</string>
+    <string name="saved_cities_header">Cidades salvas</string>
+    <string name="search_results_header">Resultados</string>
+    <string name="popular_cities_header">Cidades populares</string>
+    <string name="no_results">Nenhuma cidade encontrada</string>
+    <string name="searching">Buscando…</string>
+    <string name="use_my_location">Usar localização GPS</string>
+    <string name="location_prompt_title">Clima local</string>
+    <string name="location_permission_rationale">Permita o acesso à localização aproximada para ver o clima nas suas coordenadas.</string>
+    <string name="allow_location">Permitir</string>
+    <string name="not_now">Agora não</string>
+    <string name="open_settings">Configurações</string>
+    <string name="location_denied_message">Permissão negada. Ative nas Configurações ou busque uma cidade.</string>
+    <string name="location_disabled_message">A localização do dispositivo está desativada.</string>
+    <string name="location_unavailable_message">Não foi possível detectar sua localização. Exibindo cidade salva.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Preferências</string>
+    <string name="setting_language">Idioma</string>
+    <string name="lang_system">Sistema</string>
+    <string name="lang_english">English</string>
+    <string name="lang_arabic">العربية</string>
+    <string name="setting_theme">Aparência</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="setting_temp_unit">Unidade de temperatura</string>
+    <string name="unit_celsius">Celsius (°C)</string>
+    <string name="unit_fahrenheit">Fahrenheit (°F)</string>
+    <string name="setting_wind_unit">Unidade de vento</string>
+    <string name="data_source_note">Previsões ao vivo e qualidade do ar por Open-Meteo</string>
+
+    <!-- Loading & Error -->
+    <string name="loading_weather">Carregando previsão…</string>
+    <string name="error_load_weather">Não foi possível carregar o clima. Verifique sua conexão.</string>
+    <string name="retry">Tentar novamente</string>
+    <string name="done">Concluído</string>
+    <string name="language_chip">PT</string>
+</resources>

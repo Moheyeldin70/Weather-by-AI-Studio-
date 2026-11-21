@@ -2,10 +2,20 @@ package com.example.data.model
 
 import com.squareup.moshi.JsonClass
 
-enum class AppLanguage(val code: String) {
-    SYSTEM("system"),
-    ENGLISH("en"),
-    ARABIC("ar");
+enum class AppLanguage(val code: String, val nativeName: String) {
+    SYSTEM("system", ""),
+    ENGLISH("en", "English"),
+    ARABIC("ar", "العربية"),
+    JAPANESE("ja", "日本語"),
+    CHINESE("zh", "中文"),
+    FRENCH("fr", "Français"),
+    SPANISH("es", "Español"),
+    GERMAN("de", "Deutsch"),
+    ITALIAN("it", "Italiano"),
+    PORTUGUESE("pt", "Português"),
+    KOREAN("ko", "한국어"),
+    RUSSIAN("ru", "Русский"),
+    TURKISH("tr", "Türkçe");
 
     companion object {
         fun fromCode(code: String?): AppLanguage =
@@ -59,6 +69,8 @@ data class SavedCity(
     val nameAr: String,
     val countryEn: String,
     val countryAr: String,
+    val localizedNames: Map<String, String> = emptyMap(),
+    val localizedCountries: Map<String, String> = emptyMap(),
     val admin1: String? = null,
     val latitude: Double,
     val longitude: Double,
@@ -70,11 +82,23 @@ data class SavedCity(
     val lastLowC: Double? = null,
     val updatedAt: Long = 0L
 ) {
-    fun displayName(isArabic: Boolean): String =
-        if (isArabic) nameAr.ifBlank { nameEn } else nameEn.ifBlank { nameAr }
+    fun displayName(languageCode: String): String {
+        val normalized = languageCode.lowercase()
+        return localizedNames[normalized]?.takeIf { it.isNotBlank() }
+            ?: when (normalized) {
+                "ar" -> nameAr.ifBlank { nameEn }
+                else -> nameEn.ifBlank { localizedNames.values.firstOrNull { it.isNotBlank() } ?: nameAr }
+            }
+    }
 
-    fun displayCountry(isArabic: Boolean): String =
-        if (isArabic) countryAr.ifBlank { countryEn } else countryEn.ifBlank { countryAr }
+    fun displayCountry(languageCode: String): String {
+        val normalized = languageCode.lowercase()
+        return localizedCountries[normalized]?.takeIf { it.isNotBlank() }
+            ?: when (normalized) {
+                "ar" -> countryAr.ifBlank { countryEn }
+                else -> countryEn.ifBlank { localizedCountries.values.firstOrNull { it.isNotBlank() } ?: countryAr }
+            }
+    }
 }
 
 data class GeocodingCity(
@@ -85,6 +109,8 @@ data class GeocodingCity(
     val country: String,
     val countryEn: String,
     val countryAr: String,
+    val localizedNames: Map<String, String> = emptyMap(),
+    val localizedCountries: Map<String, String> = emptyMap(),
     val admin1: String?,
     val latitude: Double,
     val longitude: Double,

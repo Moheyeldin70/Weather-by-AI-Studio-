@@ -1,0 +1,144 @@
+<resources>
+    <string name="app_name">SkyPulse</string>
+
+    <!-- Navigation & Top Bar -->
+    <string name="cd_open_cities">Şehir seç</string>
+    <string name="cd_use_gps">Mevcut konumu kullan</string>
+    <string name="cd_refresh">Hava durumunu yenile</string>
+    <string name="cd_settings">Ayarlar</string>
+    <string name="cd_toggle_language">Dili değiştir</string>
+    <string name="cd_close">Kapat</string>
+    <string name="cd_back">Geri</string>
+    <string name="cd_delete_city">Şehri kaldır</string>
+    <string name="cd_add_city">Şehri kaydet</string>
+    <string name="cd_hero_sky">Gökyüzü illüstrasyonu</string>
+
+    <!-- Hero & Summary -->
+    <string name="feels_like">Hissedilen %1$s</string>
+    <string name="high_low">Y:%1$s  •  D:%2$s</string>
+    <string name="updated_just_now">Az önce güncellendi</string>
+    <string name="updated_time">Güncelleme %1$s</string>
+    <string name="offline_cached">Çevrimdışı • Kayıtlı tahmin gösteriliyor</string>
+    <string name="current_location_badge">Mevcut Konum</string>
+
+    <!-- Sections -->
+    <string name="section_hourly">24 Saatlik Tahmin</string>
+    <string name="section_daily">7 Günlük Tahmin</string>
+    <string name="section_details">Atmosferik Detaylar</string>
+    <string name="now_label">Şimdi</string>
+    <string name="today_label">Bugün</string>
+    <string name="tomorrow_label">Yarın</string>
+
+    <!-- Metrics -->
+    <string name="metric_aqi">Hava Kalitesi</string>
+    <string name="metric_uv">UV İndeksi</string>
+    <string name="metric_wind">Rüzgar</string>
+    <string name="metric_humidity">Nem</string>
+    <string name="metric_sunrise_sunset">Güneş Yolu</string>
+    <string name="metric_pressure">Basınç</string>
+    <string name="metric_visibility">Görüş Mesafesi</string>
+    <string name="metric_precipitation">Yağış</string>
+    <string name="wind_gusts">Hamle %1$s</string>
+    <string name="cloud_cover_label">Bulutluluk %1$d%%</string>
+    <string name="sunrise_label">Gün doğumu</string>
+    <string name="sunset_label">Gün batımı</string>
+    <string name="pm25_label">PM2.5: %1$s µg/m³</string>
+    <string name="pm10_label">PM10: %1$s µg/m³</string>
+    <string name="dew_comfort_dry">Kuru hava</string>
+    <string name="dew_comfort_comfortable">Konforlu</string>
+    <string name="dew_comfort_humid">Nemli</string>
+
+    <!-- Units -->
+    <string name="unit_kmh">km/sa</string>
+    <string name="unit_mph">mph</string>
+    <string name="unit_hpa">hPa</string>
+    <string name="unit_km">km</string>
+    <string name="unit_mi">mi</string>
+    <string name="unit_mm">mm</string>
+
+    <!-- AQI Levels -->
+    <string name="aqi_good">İyi</string>
+    <string name="aqi_moderate">Orta</string>
+    <string name="aqi_sensitive">Hassas</string>
+    <string name="aqi_unhealthy">Sağlıksız</string>
+    <string name="aqi_very_unhealthy">Çok Sağlıksız</string>
+    <string name="aqi_hazardous">Tehlikeli</string>
+    <string name="aqi_unavailable">Kullanılamıyor</string>
+
+    <!-- UV Levels -->
+    <string name="uv_low">Düşük</string>
+    <string name="uv_moderate">Orta</string>
+    <string name="uv_high">Yüksek</string>
+    <string name="uv_very_high">Çok Yüksek</string>
+    <string name="uv_extreme">Aşırı</string>
+
+    <!-- Wind Directions -->
+    <string name="dir_n">K</string>
+    <string name="dir_ne">KD</string>
+    <string name="dir_e">D</string>
+    <string name="dir_se">GD</string>
+    <string name="dir_s">G</string>
+    <string name="dir_sw">GB</string>
+    <string name="dir_w">B</string>
+    <string name="dir_nw">KB</string>
+
+    <!-- Weather Conditions (WMO Codes) -->
+    <string name="weather_clear">Açık Gökyüzü</string>
+    <string name="weather_mainly_clear">Az Bulutlu</string>
+    <string name="weather_partly_cloudy">Parçalı Bulutlu</string>
+    <string name="weather_overcast">Çok Bulutlu</string>
+    <string name="weather_fog">Sisli</string>
+    <string name="weather_drizzle">Hafif Çisenti</string>
+    <string name="weather_drizzle_dense">Çisenti</string>
+    <string name="weather_rain_light">Hafif Yağmur</string>
+    <string name="weather_rain_moderate">Orta Şiddetli Yağmur</string>
+    <string name="weather_rain_heavy">Şiddetli Yağmur</string>
+    <string name="weather_freezing_rain">Dondurucu Yağmur</string>
+    <string name="weather_snow_light">Hafif Kar</string>
+    <string name="weather_snow_heavy">Yoğun Kar</string>
+    <string name="weather_rain_showers">Sağanak Yağış</string>
+    <string name="weather_snow_showers">Kar Sağanağı</string>
+    <string name="weather_thunderstorm">Gök Gürültülü Fırtına</string>
+    <string name="weather_thunderstorm_hail">Dolu ve Fırtına</string>
+
+    <!-- Cities & Search -->
+    <string name="cities_title">Konumlar</string>
+    <string name="search_city_hint">Dünya genelinde şehir ara…</string>
+    <string name="saved_cities_header">Kayıtlı Şehirler</string>
+    <string name="search_results_header">Arama Sonuçları</string>
+    <string name="popular_cities_header">Popüler Şehirler</string>
+    <string name="no_results">Eşleşen şehir bulunamadı</string>
+    <string name="searching">Aranıyor…</string>
+    <string name="use_my_location">GPS Konumunu Kullan</string>
+    <string name="location_prompt_title">Yerel Hava Durumu</string>
+    <string name="location_permission_rationale">Koordinatlarınıza göre canlı hava durumunu almak için yaklaşık konum erişimine izin verin.</string>
+    <string name="allow_location">Konuma İzin Ver</string>
+    <string name="not_now">Şimdi Değil</string>
+    <string name="open_settings">Ayarlar</string>
+    <string name="location_denied_message">Konum izni reddedildi. Ayarlardan açın veya şehir arayın.</string>
+    <string name="location_disabled_message">Cihaz konum servisleri kapalı.</string>
+    <string name="location_unavailable_message">Konum alınamadı. Kayıtlı şehir gösteriliyor.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Tercihler</string>
+    <string name="setting_language">Dil</string>
+    <string name="lang_system">Sistem</string>
+    <string name="lang_english">English</string>
+    <string name="lang_arabic">العربية</string>
+    <string name="setting_theme">Görünüm</string>
+    <string name="theme_system">Sistem</string>
+    <string name="theme_light">Açık</string>
+    <string name="theme_dark">Koyu</string>
+    <string name="setting_temp_unit">Sıcaklık Birimi</string>
+    <string name="unit_celsius">Santigrat (°C)</string>
+    <string name="unit_fahrenheit">Fahrenhayt (°F)</string>
+    <string name="setting_wind_unit">Rüzgar Hızı Birimi</string>
+    <string name="data_source_note">Canlı tahminler ve hava kalitesi Open-Meteo tarafından sağlanır</string>
+
+    <!-- Loading & Error -->
+    <string name="loading_weather">Canlı tahmin alınıyor…</string>
+    <string name="error_load_weather">Hava durumu yüklenemedi. Bağlantınızı kontrol edin.</string>
+    <string name="retry">Tekrar Dene</string>
+    <string name="done">Tamam</string>
+    <string name="language_chip">TR</string>
+</resources>

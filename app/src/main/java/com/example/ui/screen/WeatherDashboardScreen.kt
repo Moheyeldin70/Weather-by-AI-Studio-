@@ -9,6 +9,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +36,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CloudOff
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.MyLocation
 import androidx.compose.material.icons.rounded.Refresh
@@ -67,6 +71,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
@@ -85,19 +90,24 @@ import com.example.ui.components.CitiesSheet
 import com.example.ui.components.DailyForecastCard
 import com.example.ui.components.HeroWeatherCard
 import com.example.ui.components.HourlyForecastCard
+import com.example.ui.components.LanguagePickerDialog
 import com.example.ui.components.SettingsSheet
 import com.example.ui.components.WeatherMetricsGrid
 import com.example.ui.viewmodel.LocationNotice
 import com.example.ui.viewmodel.WeatherUiState
 import com.example.ui.viewmodel.WeatherViewModel
+import kotlinx.coroutines.delay
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherDashboardScreen(
     viewModel: WeatherViewModel,
-    isArabic: Boolean,
-    isDarkTheme: Boolean
+    locale: Locale,
+    isDarkTheme: Boolean,
+    isOpeningOverlayVisible: Boolean = false
 ) {
+    val languageCode = locale.language.lowercase()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val preferences by viewModel.preferences.collectAsStateWithLifecycle()
     val savedCities by viewModel.savedCities.collectAsStateWithLifecycle()
@@ -111,6 +121,7 @@ fun WeatherDashboardScreen(
 
     var showCitiesSheet by rememberSaveable { mutableStateOf(false) }
     var showSettingsSheet by rememberSaveable { mutableStateOf(false) }
+    var showLanguagePicker by rememberSaveable { mutableStateOf(false) }
     var showLocationRationaleDialog by rememberSaveable { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -135,7 +146,7 @@ fun WeatherDashboardScreen(
     ) { granted ->
         hasLocationPermission = granted || viewModel.hasLocationPermission()
         if (granted) {
-            viewModel.detectCurrentLocation()
+            viewModel.detectCurrentLocation(activeLanguageCode = languageCode)
         } else {
             viewModel.notifyLocationDenied()
         }
@@ -145,7 +156,7 @@ fun WeatherDashboardScreen(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            viewModel.detectCurrentLocation()
+            viewModel.detectCurrentLocation(activeLanguageCode = languageCode)
         } else {
             viewModel.notifyLocationDisabled()
         }
@@ -168,7 +179,7 @@ fun WeatherDashboardScreen(
 
     fun triggerGpsLookup() {
         when {
-            viewModel.hasLocationPermission() -> viewModel.detectCurrentLocation()
+            viewModel.hasLocationPermission() -> viewModel.detectCurrentLocation(activeLanguageCode = languageCode)
             activity != null && ActivityCompat.shouldShowRequestPermissionRationale(
                 activity,
                 Manifest.permission.ACCESS_COARSE_LOCATION
@@ -210,10 +221,10 @@ fun WeatherDashboardScreen(
     }
 
     val activeCityTitle = when (val state = uiState) {
-        is WeatherUiState.Success -> state.city.displayName(isArabic)
-        is WeatherUiState.Error -> state.city?.displayName(isArabic)
+        is WeatherUiState.Success -> state.city.displayName(languageCode)
+        is WeatherUiState.Error -> state.city?.displayName(languageCode)
         is WeatherUiState.Loading -> savedCities.firstOrNull { it.id == preferences.activeCityId }
-            ?.displayName(isArabic)
+            ?.displayName(languageCode)
     } ?: stringResource(R.string.app_name)
 
     Scaffold(
@@ -225,7 +236,7 @@ fun WeatherDashboardScreen(
                 cityTitle = activeCityTitle,
                 isLocating = isLocating,
                 onCityClick = { showCitiesSheet = true },
-                onLanguageQuickToggle = { viewModel.toggleLanguageQuickly(isArabic) },
+                onLanguagePickerClick = { showLanguagePicker = true },
                 onGpsClick = { triggerGpsLookup() },
                 onSettingsClick = { showSettingsSheet = true }
             )
@@ -302,6 +313,7 @@ fun WeatherDashboardScreen(
                 }
 
                 is WeatherUiState.Success -> {
+                    val revealReady = !isOpeningOverlayVisible
                     BoxWithConstraints(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.TopCenter
@@ -333,35 +345,43 @@ fun WeatherDashboardScreen(
                                             onDismissClick = { viewModel.dismissLocationPrompt() }
                                         )
                                     }
-                                    HeroWeatherCard(
-                                        city = state.city,
-                                        bundle = state.bundle,
-                                        tempUnit = preferences.temperatureUnit,
-                                        isArabic = isArabic,
-                                        isDarkTheme = isDarkTheme,
-                                        isOffline = state.isOffline
-                                    )
-                                    WeatherMetricsGrid(
-                                        bundle = state.bundle,
-                                        windUnit = preferences.windSpeedUnit,
-                                        isArabic = isArabic
-                                    )
+                                    StaggeredEntranceItem(visible = revealReady, delayMillis = 0) {
+                                        HeroWeatherCard(
+                                            city = state.city,
+                                            bundle = state.bundle,
+                                            tempUnit = preferences.temperatureUnit,
+                                            locale = locale,
+                                            isDarkTheme = isDarkTheme,
+                                            isOffline = state.isOffline
+                                        )
+                                    }
+                                    StaggeredEntranceItem(visible = revealReady, delayMillis = 120) {
+                                        WeatherMetricsGrid(
+                                            bundle = state.bundle,
+                                            windUnit = preferences.windSpeedUnit,
+                                            locale = locale
+                                        )
+                                    }
                                 }
                                 Column(
                                     modifier = Modifier.weight(1f),
                                     verticalArrangement = Arrangement.spacedBy(16.dp)
                                 ) {
-                                    HourlyForecastCard(
-                                        hourly = state.bundle.hourly,
-                                        tempUnit = preferences.temperatureUnit,
-                                        isArabic = isArabic
-                                    )
-                                    DailyForecastCard(
-                                        daily = state.bundle.daily,
-                                        tempUnit = preferences.temperatureUnit,
-                                        windUnit = preferences.windSpeedUnit,
-                                        isArabic = isArabic
-                                    )
+                                    StaggeredEntranceItem(visible = revealReady, delayMillis = 60) {
+                                        HourlyForecastCard(
+                                            hourly = state.bundle.hourly,
+                                            tempUnit = preferences.temperatureUnit,
+                                            locale = locale
+                                        )
+                                    }
+                                    StaggeredEntranceItem(visible = revealReady, delayMillis = 160) {
+                                        DailyForecastCard(
+                                            daily = state.bundle.daily,
+                                            tempUnit = preferences.temperatureUnit,
+                                            windUnit = preferences.windSpeedUnit,
+                                            locale = locale
+                                        )
+                                    }
                                 }
                             }
                         } else {
@@ -383,30 +403,38 @@ fun WeatherDashboardScreen(
                                         onDismissClick = { viewModel.dismissLocationPrompt() }
                                     )
                                 }
-                                HeroWeatherCard(
-                                    city = state.city,
-                                    bundle = state.bundle,
-                                    tempUnit = preferences.temperatureUnit,
-                                    isArabic = isArabic,
-                                    isDarkTheme = isDarkTheme,
-                                    isOffline = state.isOffline
-                                )
-                                HourlyForecastCard(
-                                    hourly = state.bundle.hourly,
-                                    tempUnit = preferences.temperatureUnit,
-                                    isArabic = isArabic
-                                )
-                                DailyForecastCard(
-                                    daily = state.bundle.daily,
-                                    tempUnit = preferences.temperatureUnit,
-                                    windUnit = preferences.windSpeedUnit,
-                                    isArabic = isArabic
-                                )
-                                WeatherMetricsGrid(
-                                    bundle = state.bundle,
-                                    windUnit = preferences.windSpeedUnit,
-                                    isArabic = isArabic
-                                )
+                                StaggeredEntranceItem(visible = revealReady, delayMillis = 0) {
+                                    HeroWeatherCard(
+                                        city = state.city,
+                                        bundle = state.bundle,
+                                        tempUnit = preferences.temperatureUnit,
+                                        locale = locale,
+                                        isDarkTheme = isDarkTheme,
+                                        isOffline = state.isOffline
+                                    )
+                                }
+                                StaggeredEntranceItem(visible = revealReady, delayMillis = 70) {
+                                    HourlyForecastCard(
+                                        hourly = state.bundle.hourly,
+                                        tempUnit = preferences.temperatureUnit,
+                                        locale = locale
+                                    )
+                                }
+                                StaggeredEntranceItem(visible = revealReady, delayMillis = 140) {
+                                    DailyForecastCard(
+                                        daily = state.bundle.daily,
+                                        tempUnit = preferences.temperatureUnit,
+                                        windUnit = preferences.windSpeedUnit,
+                                        locale = locale
+                                    )
+                                }
+                                StaggeredEntranceItem(visible = revealReady, delayMillis = 210) {
+                                    WeatherMetricsGrid(
+                                        bundle = state.bundle,
+                                        windUnit = preferences.windSpeedUnit,
+                                        locale = locale
+                                    )
+                                }
                                 Spacer(Modifier.height(8.dp))
                             }
                         }
@@ -426,8 +454,8 @@ fun WeatherDashboardScreen(
             isSearching = isSearching,
             isLocating = isLocating,
             tempUnit = preferences.temperatureUnit,
-            isArabic = isArabic,
-            onSearchQueryChange = { viewModel.updateSearchQuery(it, isArabic) },
+            languageCode = languageCode,
+            onSearchQueryChange = { viewModel.updateSearchQuery(it, languageCode) },
             onSelectSavedCity = { cityId ->
                 viewModel.selectCity(cityId)
                 viewModel.clearSearch()
@@ -463,6 +491,14 @@ fun WeatherDashboardScreen(
             onTempUnitChange = { viewModel.setTemperatureUnit(it) },
             onWindUnitChange = { viewModel.setWindSpeedUnit(it) },
             onDismiss = { showSettingsSheet = false }
+        )
+    }
+
+    if (showLanguagePicker) {
+        LanguagePickerDialog(
+            selectedLanguage = preferences.language,
+            onSelectLanguage = { viewModel.setLanguage(it) },
+            onDismiss = { showLanguagePicker = false }
         )
     }
 
@@ -570,11 +606,44 @@ private fun LocationPermissionPromptCard(
 }
 
 @Composable
+private fun StaggeredEntranceItem(
+    visible: Boolean,
+    delayMillis: Int,
+    content: @Composable () -> Unit
+) {
+    var hasAnimated by rememberSaveable { mutableStateOf(false) }
+    val progress = remember { Animatable(if (hasAnimated) 1f else 0f) }
+
+    LaunchedEffect(visible) {
+        if (visible && !hasAnimated) {
+            if (delayMillis > 0) delay(delayMillis.toLong())
+            progress.animateTo(
+                targetValue = 1f,
+                animationSpec = spring(
+                    dampingRatio = 0.85f,
+                    stiffness = Spring.StiffnessMediumLow
+                )
+            )
+            hasAnimated = true
+        }
+    }
+
+    Box(
+        modifier = Modifier.graphicsLayer {
+            alpha = progress.value
+            translationY = (1f - progress.value) * 28.dp.toPx()
+        }
+    ) {
+        content()
+    }
+}
+
+@Composable
 private fun DashboardTopBar(
     cityTitle: String,
     isLocating: Boolean,
     onCityClick: () -> Unit,
-    onLanguageQuickToggle: () -> Unit,
+    onLanguagePickerClick: () -> Unit,
     onGpsClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
@@ -632,18 +701,29 @@ private fun DashboardTopBar(
                 modifier = Modifier
                     .minimumInteractiveComponentSize()
                     .clip(RoundedCornerShape(14.dp))
-                    .clickable(onClick = onLanguageQuickToggle)
+                    .clickable(onClick = onLanguagePickerClick)
                     .testTag("quick_language_toggle"),
                 shape = RoundedCornerShape(14.dp),
                 color = MaterialTheme.colorScheme.surface
             ) {
-                Text(
-                    text = stringResource(R.string.language_chip),
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
-                )
+                Row(
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Language,
+                        contentDescription = stringResource(R.string.setting_language),
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.language_chip),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
 
             Surface(

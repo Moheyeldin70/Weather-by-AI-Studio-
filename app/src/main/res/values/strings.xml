@@ -103,7 +103,7 @@
 
     <!-- Cities & Search -->
     <string name="cities_title">Locations</string>
-    <string name="search_city_hint">Search city (English or العربية)…</string>
+    <string name="search_city_hint">Search city worldwide…</string>
     <string name="saved_cities_header">Saved Cities</string>
     <string name="search_results_header">Search Results</string>
     <string name="popular_cities_header">Explore Cities</string>
@@ -140,5 +140,5 @@
     <string name="error_load_weather">Unable to load weather data. Check your connection and try again.</string>
     <string name="retry">Retry</string>
     <string name="done">Done</string>
-    <string name="language_chip">العربية</string>
+    <string name="language_chip">EN</string>
 </resources>

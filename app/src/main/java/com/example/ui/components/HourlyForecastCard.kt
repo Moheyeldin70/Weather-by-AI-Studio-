@@ -40,12 +40,13 @@ import com.example.data.model.HourlyForecast
 import com.example.data.model.TemperatureUnit
 import com.example.ui.theme.RainBlue
 import com.example.ui.utils.WeatherFormatter
+import java.util.Locale
 
 @Composable
 fun HourlyForecastCard(
     hourly: List<HourlyForecast>,
     tempUnit: TemperatureUnit,
-    isArabic: Boolean,
+    locale: Locale,
     modifier: Modifier = Modifier
 ) {
     if (hourly.isEmpty()) return
@@ -99,7 +100,7 @@ fun HourlyForecastCard(
                     val label = if (isNow) {
                         stringResource(R.string.now_label)
                     } else {
-                        WeatherFormatter.formatHourLabel(item.timeIso, isArabic)
+                        WeatherFormatter.formatHourLabel(item.timeIso, locale)
                     }
 
                     Surface(

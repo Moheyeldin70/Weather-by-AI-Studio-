@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 sealed interface WeatherUiState {
     data object Loading : WeatherUiState
@@ -108,8 +109,17 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
             loadWeather(initialCity, forceRefresh = false)
 
             if (shouldAutoDetectGps) {
-                detectCurrentLocation(silentIfUnavailable = true)
+                val activeLang = resolveEffectiveLanguageCode(prefs.language)
+                detectCurrentLocation(activeLanguageCode = activeLang, silentIfUnavailable = true)
             }
+        }
+    }
+
+    private fun resolveEffectiveLanguageCode(appLanguage: AppLanguage): String {
+        return if (appLanguage == AppLanguage.SYSTEM) {
+            Locale.getDefault().language.ifBlank { "en" }
+        } else {
+            appLanguage.code
         }
     }
 
@@ -152,6 +162,8 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
             nameAr = geo.nameAr,
             countryEn = geo.countryEn,
             countryAr = geo.countryAr,
+            localizedNames = geo.localizedNames,
+            localizedCountries = geo.localizedCountries,
             admin1 = geo.admin1,
             latitude = geo.latitude,
             longitude = geo.longitude,
@@ -173,10 +185,13 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun detectCurrentLocation(silentIfUnavailable: Boolean = false) {
+    fun detectCurrentLocation(
+        activeLanguageCode: String = resolveEffectiveLanguageCode(preferences.value.language),
+        silentIfUnavailable: Boolean = false
+    ) {
         viewModelScope.launch {
             _isLocating.value = true
-            val result = locationProvider.fetchCurrentLocation()
+            val result = locationProvider.fetchCurrentLocation(activeLanguageCode)
             _isLocating.value = false
             when (result) {
                 is LocationFetchResult.Success -> {
@@ -235,7 +250,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
         _locationNotice.value = null
     }
 
-    fun updateSearchQuery(query: String, isArabicUi: Boolean) {
+    fun updateSearchQuery(query: String, languageCode: String) {
         _searchQuery.value = query
         searchJob?.cancel()
         if (query.trim().length < 2) {
@@ -246,7 +261,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
         searchJob = viewModelScope.launch {
             _isSearching.value = true
             delay(320)
-            val results = repository.searchCities(query, isArabicUi)
+            val results = repository.searchCities(query, languageCode)
             _searchResults.value = results
             _isSearching.value = false
         }
@@ -261,11 +276,6 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
 
     fun setLanguage(language: AppLanguage) {
         viewModelScope.launch { preferencesManager.setLanguage(language) }
-    }
-
-    fun toggleLanguageQuickly(currentlyArabic: Boolean) {
-        val next = if (currentlyArabic) AppLanguage.ENGLISH else AppLanguage.ARABIC
-        setLanguage(next)
     }
 
     fun setThemeMode(themeMode: ThemeMode) {

@@ -28,7 +28,9 @@ data class DetectedLocation(
     val nameEn: String,
     val nameAr: String,
     val countryEn: String,
-    val countryAr: String
+    val countryAr: String,
+    val localizedNames: Map<String, String> = emptyMap(),
+    val localizedCountries: Map<String, String> = emptyMap()
 )
 
 sealed interface LocationFetchResult {
@@ -57,7 +59,7 @@ class LocationProvider(private val context: Context) {
     }
 
     @SuppressLint("MissingPermission")
-    suspend fun fetchCurrentLocation(): LocationFetchResult {
+    suspend fun fetchCurrentLocation(activeLanguageCode: String = "en"): LocationFetchResult {
         if (!hasLocationPermission()) {
             return LocationFetchResult.PermissionMissing
         }
@@ -80,9 +82,27 @@ class LocationProvider(private val context: Context) {
             }
 
         return withContext(Dispatchers.IO) {
-            val (cityEn, countryEn) = reverseGeocode(coords.first, coords.second, Locale("en"))
-            val (cityAr, countryAr) = reverseGeocode(coords.first, coords.second, Locale("ar"))
+            val (cityEn, countryEn) = reverseGeocode(coords.first, coords.second, Locale.ENGLISH)
+            val (cityAr, countryAr) = reverseGeocode(coords.first, coords.second, Locale.forLanguageTag("ar"))
             val coordsLabel = formatCoordinates(coords.first, coords.second)
+
+            val localizedNames = mutableMapOf<String, String>()
+            val localizedCountries = mutableMapOf<String, String>()
+            if (cityEn != null) localizedNames["en"] = cityEn
+            if (cityAr != null) localizedNames["ar"] = cityAr
+            if (countryEn != null) localizedCountries["en"] = countryEn
+            if (countryAr != null) localizedCountries["ar"] = countryAr
+
+            val lang = activeLanguageCode.lowercase()
+            if (lang != "en" && lang != "ar") {
+                val (cityLocal, countryLocal) = reverseGeocode(
+                    coords.first,
+                    coords.second,
+                    Locale.forLanguageTag(lang)
+                )
+                if (cityLocal != null) localizedNames[lang] = cityLocal
+                if (countryLocal != null) localizedCountries[lang] = countryLocal
+            }
 
             LocationFetchResult.Success(
                 DetectedLocation(
@@ -91,7 +111,9 @@ class LocationProvider(private val context: Context) {
                     nameEn = cityEn ?: "Current Location",
                     nameAr = cityAr ?: "الموقع الحالي",
                     countryEn = countryEn ?: coordsLabel,
-                    countryAr = countryAr ?: coordsLabel
+                    countryAr = countryAr ?: coordsLabel,
+                    localizedNames = localizedNames,
+                    localizedCountries = localizedCountries
                 )
             )
         }

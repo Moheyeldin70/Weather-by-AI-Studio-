@@ -62,7 +62,7 @@ fun CitiesSheet(
     isSearching: Boolean,
     isLocating: Boolean,
     tempUnit: TemperatureUnit,
-    isArabic: Boolean,
+    languageCode: String,
     onSearchQueryChange: (String) -> Unit,
     onSelectSavedCity: (String) -> Unit,
     onDeleteCity: (String) -> Unit,
@@ -226,10 +226,11 @@ fun CitiesSheet(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             items(searchResults, key = { it.id }) { geo ->
-                                val title = if (isArabic) geo.nameAr else geo.nameEn
+                                val title = geo.localizedNames[languageCode] ?: geo.name
+                                val countryText = geo.localizedCountries[languageCode] ?: geo.country
                                 val subtitle = listOfNotNull(
                                     geo.admin1?.takeIf { it.isNotBlank() && it != title },
-                                    if (isArabic) geo.countryAr else geo.countryEn
+                                    countryText
                                 ).filter { it.isNotBlank() }.joinToString(", ")
 
                                 Surface(
@@ -347,7 +348,7 @@ fun CitiesSheet(
                                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                                         ) {
                                             Text(
-                                                text = city.displayName(isArabic),
+                                                text = city.displayName(languageCode),
                                                 style = MaterialTheme.typography.titleMedium,
                                                 color = MaterialTheme.colorScheme.onSurface
                                             )
@@ -360,7 +361,7 @@ fun CitiesSheet(
                                                 )
                                             }
                                         }
-                                        val country = city.displayCountry(isArabic)
+                                        val country = city.displayCountry(languageCode)
                                         if (country.isNotBlank()) {
                                             Text(
                                                 text = country,
@@ -416,7 +417,7 @@ fun CitiesSheet(
                         .forEach { city ->
                             AssistChip(
                                 onClick = { onAddPopularCity(city) },
-                                label = { Text(city.displayName(isArabic)) },
+                                label = { Text(city.displayName(languageCode)) },
                                 leadingIcon = {
                                     Icon(
                                         imageVector = Icons.Rounded.Add,

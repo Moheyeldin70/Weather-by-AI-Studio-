@@ -103,7 +103,7 @@
 
     <!-- Cities & Search -->
     <string name="cities_title">المدن والمواقع</string>
-    <string name="search_city_hint">ابحث عن مدينة (عربي أو English)…</string>
+    <string name="search_city_hint">ابحث عن أي مدينة في العالم…</string>
     <string name="saved_cities_header">المدن المحفوظة</string>
     <string name="search_results_header">نتائج البحث</string>
     <string name="popular_cities_header">مدن مقترحة</string>
@@ -140,5 +140,5 @@
     <string name="error_load_weather">تعذر تحميل بيانات الطقس. تحقق من اتصالك وأعد المحاولة.</string>
     <string name="retry">إعادة المحاولة</string>
     <string name="done">تم</string>
-    <string name="language_chip">EN</string>
+    <string name="language_chip">عربي</string>
 </resources>

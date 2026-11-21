@@ -51,6 +51,7 @@ import com.example.data.model.WindSpeedUnit
 import com.example.ui.theme.RainBlue
 import com.example.ui.theme.SunGold
 import com.example.ui.utils.WeatherFormatter
+import java.util.Locale
 import kotlin.math.roundToInt
 
 @Composable
@@ -58,7 +59,7 @@ fun DailyForecastCard(
     daily: List<DailyForecast>,
     tempUnit: TemperatureUnit,
     windUnit: WindSpeedUnit,
-    isArabic: Boolean,
+    locale: Locale,
     modifier: Modifier = Modifier
 ) {
     if (daily.isEmpty()) return
@@ -98,7 +99,7 @@ fun DailyForecastCard(
                 val dayLabel = when (index) {
                     0 -> stringResource(R.string.today_label)
                     1 -> stringResource(R.string.tomorrow_label)
-                    else -> WeatherFormatter.formatDayName(day.dateIso, isArabic)
+                    else -> WeatherFormatter.formatDayName(day.dateIso, locale)
                 }
 
                 Column(
@@ -124,7 +125,7 @@ fun DailyForecastCard(
                                 maxLines = 1
                             )
                             Text(
-                                text = WeatherFormatter.formatShortDate(day.dateIso, isArabic),
+                                text = WeatherFormatter.formatShortDate(day.dateIso, locale),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -231,14 +232,14 @@ fun DailyForecastCard(
                             ) {
                                 Text(
                                     text = "${stringResource(R.string.sunrise_label)}: ${
-                                        WeatherFormatter.formatClockTime(day.sunriseIso, isArabic)
+                                        WeatherFormatter.formatClockTime(day.sunriseIso, locale)
                                     }",
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Text(
                                     text = "${stringResource(R.string.sunset_label)}: ${
-                                        WeatherFormatter.formatClockTime(day.sunsetIso, isArabic)
+                                        WeatherFormatter.formatClockTime(day.sunsetIso, locale)
                                     }",
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant

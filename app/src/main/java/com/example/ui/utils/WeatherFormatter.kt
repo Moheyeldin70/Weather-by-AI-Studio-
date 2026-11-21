@@ -1,5 +1,6 @@
 package com.example.ui.utils
 
+import android.text.format.DateFormat
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
 import com.example.R
@@ -12,6 +13,7 @@ import com.example.ui.theme.GaugeSensitive
 import com.example.ui.theme.GaugeUnhealthy
 import com.example.ui.theme.GaugeVeryUnhealthy
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -169,67 +171,82 @@ object WeatherFormatter {
         }
     }
 
-    fun formatHourLabel(timeIso: String, isArabic: Boolean): String {
+    fun formatHourLabel(timeIso: String, locale: Locale): String {
         val hourPart = timeIso.substringAfter("T", "").take(2).toIntOrNull() ?: return timeIso
+        val lang = locale.language.lowercase()
         val isPm = hourPart >= 12
         val hour12 = when {
             hourPart == 0 -> 12
             hourPart > 12 -> hourPart - 12
             else -> hourPart
         }
-        return if (isArabic) {
-            val suffix = if (isPm) "م" else "ص"
-            "$hour12 $suffix"
-        } else {
-            val suffix = if (isPm) "PM" else "AM"
-            "$hour12 $suffix"
+        return when (lang) {
+            "ar" -> "$hour12 ${if (isPm) "م" else "ص"}"
+            "ja", "zh", "ko" -> String.format(Locale.US, "%02d:00", hourPart)
+            "fr", "de", "es", "it", "pt", "ru", "tr" -> String.format(Locale.US, "%02d:00", hourPart)
+            else -> "$hour12 ${if (isPm) "PM" else "AM"}"
         }
     }
 
-    fun formatClockTime(timeIso: String, isArabic: Boolean): String {
+    fun formatClockTime(timeIso: String, locale: Locale): String {
         val timePart = timeIso.substringAfter("T", "")
         if (timePart.length < 5) return "--:--"
         val hour = timePart.substring(0, 2).toIntOrNull() ?: return timePart
         val minute = timePart.substring(3, 5)
+        val lang = locale.language.lowercase()
         val isPm = hour >= 12
         val hour12 = when {
             hour == 0 -> 12
             hour > 12 -> hour - 12
             else -> hour
         }
-        val suffix = if (isArabic) (if (isPm) "م" else "ص") else (if (isPm) "PM" else "AM")
-        return "$hour12:$minute $suffix"
+        return when (lang) {
+            "ar" -> "$hour12:$minute ${if (isPm) "م" else "ص"}"
+            "fr", "de", "es", "it", "pt", "ru", "tr", "ja", "zh", "ko" ->
+                String.format(Locale.US, "%02d:%s", hour, minute)
+            else -> "$hour12:$minute ${if (isPm) "PM" else "AM"}"
+        }
     }
 
-    fun formatDayName(dateIso: String, isArabic: Boolean): String {
+    fun formatDayName(dateIso: String, locale: Locale): String {
         return try {
             val parser = SimpleDateFormat("yyyy-MM-dd", Locale.US)
             val date = parser.parse(dateIso) ?: return dateIso
-            val locale = if (isArabic) Locale("ar") else Locale.ENGLISH
             SimpleDateFormat("EEEE", locale).format(date)
         } catch (_: Exception) {
             dateIso
         }
     }
 
-    fun formatShortDate(dateIso: String, isArabic: Boolean): String {
+    fun formatShortDate(dateIso: String, locale: Locale): String {
         return try {
             val parser = SimpleDateFormat("yyyy-MM-dd", Locale.US)
             val date = parser.parse(dateIso) ?: return dateIso
-            val locale = if (isArabic) Locale("ar") else Locale.ENGLISH
-            SimpleDateFormat("d MMM", locale).format(date)
+            val pattern = runCatching {
+                DateFormat.getBestDateTimePattern(locale, "MMMd")
+            }.getOrDefault("d MMM")
+            SimpleDateFormat(pattern, locale).format(date)
         } catch (_: Exception) {
             dateIso
         }
     }
 
-    fun formatUpdatedClock(epochMillis: Long, isArabic: Boolean): String {
-        val sdf = SimpleDateFormat("h:mm a", Locale.US)
-        val raw = sdf.format(Date(epochMillis))
-        return if (isArabic) {
-            raw.replace("AM", "ص").replace("PM", "م")
-        } else {
-            raw
+    fun formatUpdatedClock(epochMillis: Long, locale: Locale): String {
+        val cal = Calendar.getInstance().apply { timeInMillis = epochMillis }
+        val hour24 = cal.get(Calendar.HOUR_OF_DAY)
+        val minute = String.format(Locale.US, "%02d", cal.get(Calendar.MINUTE))
+        val lang = locale.language.lowercase()
+        val isPm = hour24 >= 12
+        val hour12 = when {
+            hour24 == 0 -> 12
+            hour24 > 12 -> hour24 - 12
+            else -> hour24
+        }
+        return when (lang) {
+            "ar" -> "$hour12:$minute ${if (isPm) "م" else "ص"}"
+            "fr", "de", "es", "it", "pt", "ru", "tr", "ja", "zh", "ko" ->
+                String.format(Locale.US, "%02d:%s", hour24, minute)
+            else -> SimpleDateFormat("h:mm a", Locale.US).format(Date(epochMillis))
         }
     }
 

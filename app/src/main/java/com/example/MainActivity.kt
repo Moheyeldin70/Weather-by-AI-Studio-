@@ -5,16 +5,24 @@ import android.content.ContextWrapper
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
+import android.text.TextUtils
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultRegistryOwner
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -23,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.data.model.AppLanguage
 import com.example.data.model.ThemeMode
+import com.example.ui.components.OpeningAnimationOverlay
 import com.example.ui.screen.WeatherDashboardScreen
 import com.example.ui.theme.SkyPulseTheme
 import com.example.ui.viewmodel.WeatherViewModel
@@ -48,6 +57,7 @@ private class LocalizedContextWrapper(
 @Composable
 fun SkyPulseRoot(weatherViewModel: WeatherViewModel = viewModel()) {
     val preferences by weatherViewModel.preferences.collectAsStateWithLifecycle()
+    var showOpeningAnimation by rememberSaveable { mutableStateOf(true) }
 
     val isDarkTheme = when (preferences.themeMode) {
         ThemeMode.SYSTEM -> isSystemInDarkTheme()
@@ -62,14 +72,14 @@ fun SkyPulseRoot(weatherViewModel: WeatherViewModel = viewModel()) {
 
     val targetLocale = remember(preferences.language, baseConfig) {
         when (preferences.language) {
-            AppLanguage.ENGLISH -> Locale("en")
-            AppLanguage.ARABIC -> Locale("ar")
             AppLanguage.SYSTEM -> baseConfig.locales.get(0) ?: Locale.getDefault()
+            else -> Locale.forLanguageTag(preferences.language.code)
         }
     }
 
     val isArabic = targetLocale.language.equals("ar", ignoreCase = true)
-    val layoutDirection = if (isArabic) LayoutDirection.Rtl else LayoutDirection.Ltr
+    val isRtl = TextUtils.getLayoutDirectionFromLocale(targetLocale) == View.LAYOUT_DIRECTION_RTL
+    val layoutDirection = if (isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr
 
     val localizedContext: Context = remember(baseContext, targetLocale) {
         val config = Configuration(baseContext.resources.configuration).apply {
@@ -98,11 +108,20 @@ fun SkyPulseRoot(weatherViewModel: WeatherViewModel = viewModel()) {
             darkTheme = isDarkTheme,
             isArabic = isArabic
         ) {
-            WeatherDashboardScreen(
-                viewModel = weatherViewModel,
-                isArabic = isArabic,
-                isDarkTheme = isDarkTheme
-            )
+            Box(modifier = Modifier.fillMaxSize()) {
+                WeatherDashboardScreen(
+                    viewModel = weatherViewModel,
+                    locale = targetLocale,
+                    isDarkTheme = isDarkTheme,
+                    isOpeningOverlayVisible = showOpeningAnimation
+                )
+                if (showOpeningAnimation) {
+                    OpeningAnimationOverlay(
+                        isDarkTheme = isDarkTheme,
+                        onAnimationFinished = { showOpeningAnimation = false }
+                    )
+                }
+            }
         }
     }
 }

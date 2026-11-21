@@ -40,13 +40,14 @@ import com.example.data.model.TemperatureUnit
 import com.example.data.model.WeatherBundle
 import com.example.ui.utils.WeatherFormatter
 import com.example.ui.utils.WeatherMood
+import java.util.Locale
 
 @Composable
 fun HeroWeatherCard(
     city: SavedCity,
     bundle: WeatherBundle,
     tempUnit: TemperatureUnit,
-    isArabic: Boolean,
+    locale: Locale,
     isDarkTheme: Boolean,
     isOffline: Boolean,
     modifier: Modifier = Modifier
@@ -56,10 +57,11 @@ fun HeroWeatherCard(
     val mood = WeatherFormatter.weatherMood(current.weatherCode, current.isDay)
     val gradientColors = heroSkyGradient(mood = mood, isDarkTheme = isDarkTheme)
 
+    val languageCode = locale.language.lowercase()
     val highText = today?.let { WeatherFormatter.formatTemp(it.maxTempC, tempUnit) } ?: "--°"
     val lowText = today?.let { WeatherFormatter.formatTemp(it.minTempC, tempUnit) } ?: "--°"
     val feelsText = WeatherFormatter.formatTemp(current.apparentTemperatureC, tempUnit)
-    val updatedClock = WeatherFormatter.formatUpdatedClock(bundle.fetchedAtMillis, isArabic)
+    val updatedClock = WeatherFormatter.formatUpdatedClock(bundle.fetchedAtMillis, locale)
 
     Box(
         modifier = modifier
@@ -112,13 +114,13 @@ fun HeroWeatherCard(
                             Spacer(Modifier.width(6.dp))
                         }
                         Text(
-                            text = city.displayName(isArabic),
+                            text = city.displayName(languageCode),
                             style = MaterialTheme.typography.headlineMedium,
                             color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    val country = city.displayCountry(isArabic)
+                    val country = city.displayCountry(languageCode)
                     if (country.isNotBlank()) {
                         Text(
                             text = country,

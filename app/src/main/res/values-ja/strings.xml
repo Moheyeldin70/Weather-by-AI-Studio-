@@ -1,0 +1,144 @@
+<resources>
+    <string name="app_name">SkyPulse</string>
+
+    <!-- Navigation & Top Bar -->
+    <string name="cd_open_cities">都市を選択</string>
+    <string name="cd_use_gps">現在地を使用</string>
+    <string name="cd_refresh">天気を更新</string>
+    <string name="cd_settings">設定</string>
+    <string name="cd_toggle_language">言語を切り替え</string>
+    <string name="cd_close">閉じる</string>
+    <string name="cd_back">戻る</string>
+    <string name="cd_delete_city">都市を削除</string>
+    <string name="cd_add_city">都市を保存</string>
+    <string name="cd_hero_sky">空のイラスト</string>
+
+    <!-- Hero & Summary -->
+    <string name="feels_like">体感 %1$s</string>
+    <string name="high_low">最高:%1$s  •  最低:%2$s</string>
+    <string name="updated_just_now">たった今更新</string>
+    <string name="updated_time">更新 %1$s</string>
+    <string name="offline_cached">オフライン • 保存された予報を表示</string>
+    <string name="current_location_badge">現在地</string>
+
+    <!-- Sections -->
+    <string name="section_hourly">24時間予報</string>
+    <string name="section_daily">週間予報 (7日間)</string>
+    <string name="section_details">気象詳細</string>
+    <string name="now_label">現在</string>
+    <string name="today_label">今日</string>
+    <string name="tomorrow_label">明日</string>
+
+    <!-- Metrics -->
+    <string name="metric_aqi">空気質</string>
+    <string name="metric_uv">UV指数</string>
+    <string name="metric_wind">風</string>
+    <string name="metric_humidity">湿度</string>
+    <string name="metric_sunrise_sunset">日の出・日の入り</string>
+    <string name="metric_pressure">気圧</string>
+    <string name="metric_visibility">視程</string>
+    <string name="metric_precipitation">降水量</string>
+    <string name="wind_gusts">突風 %1$s</string>
+    <string name="cloud_cover_label">雲量 %1$d%%</string>
+    <string name="sunrise_label">日の出</string>
+    <string name="sunset_label">日の入り</string>
+    <string name="pm25_label">PM2.5: %1$s µg/m³</string>
+    <string name="pm10_label">PM10: %1$s µg/m³</string>
+    <string name="dew_comfort_dry">乾燥</string>
+    <string name="dew_comfort_comfortable">快適</string>
+    <string name="dew_comfort_humid">多湿</string>
+
+    <!-- Units -->
+    <string name="unit_kmh">km/h</string>
+    <string name="unit_mph">mph</string>
+    <string name="unit_hpa">hPa</string>
+    <string name="unit_km">km</string>
+    <string name="unit_mi">mi</string>
+    <string name="unit_mm">mm</string>
+
+    <!-- AQI Levels -->
+    <string name="aqi_good">良好</string>
+    <string name="aqi_moderate">普通</string>
+    <string name="aqi_sensitive">敏感な方に注意</string>
+    <string name="aqi_unhealthy">不健康</string>
+    <string name="aqi_very_unhealthy">非常に不健康</string>
+    <string name="aqi_hazardous">危険</string>
+    <string name="aqi_unavailable">利用不可</string>
+
+    <!-- UV Levels -->
+    <string name="uv_low">弱い</string>
+    <string name="uv_moderate">中程度</string>
+    <string name="uv_high">強い</string>
+    <string name="uv_very_high">非常に強い</string>
+    <string name="uv_extreme">極端に強い</string>
+
+    <!-- Wind Directions -->
+    <string name="dir_n">北</string>
+    <string name="dir_ne">北東</string>
+    <string name="dir_e">東</string>
+    <string name="dir_se">南東</string>
+    <string name="dir_s">南</string>
+    <string name="dir_sw">南西</string>
+    <string name="dir_w">西</string>
+    <string name="dir_nw">北西</string>
+
+    <!-- Weather Conditions (WMO Codes) -->
+    <string name="weather_clear">快晴</string>
+    <string name="weather_mainly_clear">晴れ</string>
+    <string name="weather_partly_cloudy">晴れ時々曇り</string>
+    <string name="weather_overcast">曇り</string>
+    <string name="weather_fog">霧</string>
+    <string name="weather_drizzle">弱い霧雨</string>
+    <string name="weather_drizzle_dense">霧雨</string>
+    <string name="weather_rain_light">小雨</string>
+    <string name="weather_rain_moderate">雨</string>
+    <string name="weather_rain_heavy">大雨</string>
+    <string name="weather_freezing_rain">着氷性の雨</string>
+    <string name="weather_snow_light">小雪</string>
+    <string name="weather_snow_heavy">大雪</string>
+    <string name="weather_rain_showers">にわか雨</string>
+    <string name="weather_snow_showers">にわか雪</string>
+    <string name="weather_thunderstorm">雷雨</string>
+    <string name="weather_thunderstorm_hail">雷雨と雹</string>
+
+    <!-- Cities & Search -->
+    <string name="cities_title">地域・都市</string>
+    <string name="search_city_hint">世界の都市を検索…</string>
+    <string name="saved_cities_header">保存した都市</string>
+    <string name="search_results_header">検索結果</string>
+    <string name="popular_cities_header">人気の都市</string>
+    <string name="no_results">一致する都市が見つかりません</string>
+    <string name="searching">検索中…</string>
+    <string name="use_my_location">GPSで現在地を使用</string>
+    <string name="location_prompt_title">現在地の天気予報</string>
+    <string name="location_permission_rationale">おおよその位置情報へのアクセスを許可すると、現在地の天気を自動で取得します。</string>
+    <string name="allow_location">位置情報を許可</string>
+    <string name="not_now">後で</string>
+    <string name="open_settings">設定</string>
+    <string name="location_denied_message">位置情報の権限が拒否されました。設定から有効にするか都市を手動で検索してください。</string>
+    <string name="location_disabled_message">端末の位置情報サービスが無効です。有効にしてください。</string>
+    <string name="location_unavailable_message">現在地を取得できませんでした。保存された都市を表示しています。</string>
+
+    <!-- Settings -->
+    <string name="settings_title">環境設定</string>
+    <string name="setting_language">言語</string>
+    <string name="lang_system">システム</string>
+    <string name="lang_english">English</string>
+    <string name="lang_arabic">العربية</string>
+    <string name="setting_theme">外観</string>
+    <string name="theme_system">システム</string>
+    <string name="theme_light">ライト</string>
+    <string name="theme_dark">ダーク</string>
+    <string name="setting_temp_unit">温度単位</string>
+    <string name="unit_celsius">摂氏 (°C)</string>
+    <string name="unit_fahrenheit">華氏 (°F)</string>
+    <string name="setting_wind_unit">風速単位</string>
+    <string name="data_source_note">天気予報・空気質データ提供: Open-Meteo</string>
+
+    <!-- Loading & Error -->
+    <string name="loading_weather">最新の天気を取得中…</string>
+    <string name="error_load_weather">天気データを読み込めませんでした。接続を確認して再試行してください。</string>
+    <string name="retry">再試行</string>
+    <string name="done">完了</string>
+    <string name="language_chip">日本語</string>
+</resources>

@@ -62,7 +62,7 @@ import kotlin.math.sin
 fun WeatherMetricsGrid(
     bundle: WeatherBundle,
     windUnit: WindSpeedUnit,
-    isArabic: Boolean,
+    locale: Locale,
     modifier: Modifier = Modifier
 ) {
     val current = bundle.current
@@ -267,7 +267,7 @@ fun WeatherMetricsGrid(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = WeatherFormatter.formatClockTime(sunriseIso, isArabic),
+                            text = WeatherFormatter.formatClockTime(sunriseIso, locale),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -280,7 +280,7 @@ fun WeatherMetricsGrid(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = WeatherFormatter.formatClockTime(sunsetIso, isArabic),
+                            text = WeatherFormatter.formatClockTime(sunsetIso, locale),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
